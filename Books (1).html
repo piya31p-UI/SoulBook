@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Books - SoulBook</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&family=Merriweather:ital,wght@0,300;1,300&family=Dancing+Script:wght@600&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe0f0 0%, #ffd6f0 50%, #f9c6e8 100%);
+            font-family: 'Lato', sans-serif;
+            padding: 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: white;
+            color: #d63384;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(214,51,132,0.15);
+            transition: all 0.2s;
+        }
+        .back-btn:hover { background: #d63384; color: white; }
+
+        h1.page-title {
+            font-family: 'Playfair Display', serif;
+            color: #c2185b;
+            font-size: 28px;
+        }
+
+        .write-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 4px 24px rgba(214,51,132,0.12);
+            margin-bottom: 32px;
+        }
+
+        .write-card h2 {
+            font-family: 'Playfair Display', serif;
+            color: #c2185b;
+            margin-bottom: 18px;
+            font-size: 20px;
+        }
+
+        .write-card input[type="text"],
+        .write-card select,
+        .write-card textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #f8bbd9;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Lato', sans-serif;
+            margin-bottom: 14px;
+            outline: none;
+            transition: border 0.2s;
+            background: #fff9fc;
+        }
+        .write-card input:focus,
+        .write-card select:focus,
+        .write-card textarea:focus {
+            border-color: #d63384;
+        }
+
+        .write-card textarea { resize: vertical; min-height: 130px; }
+
+        .save-btn {
+            background: linear-gradient(135deg, #f06292, #d63384);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(214,51,132,0.3);
+            transition: all 0.2s;
+        }
+        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(214,51,132,0.4); }
+
+        .stories-section h2 {
+            font-family: 'Playfair Display', serif;
+            color: #c2185b;
+            margin-bottom: 16px;
+            font-size: 22px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 2px solid #f8bbd9;
+            color: #c2185b;
+            padding: 7px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: #d63384;
+            color: white;
+            border-color: #d63384;
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 3px 16px rgba(214,51,132,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border-left: 5px solid #f06292;
+        }
+        .story-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(214,51,132,0.18); }
+
+        .story-card .story-emoji { font-size: 28px; margin-bottom: 8px; }
+        .story-card .story-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .story-card .story-category {
+            display: inline-block;
+            background: #fce4ec;
+            color: #c2185b;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+        .story-card .preview {
+            color: #888;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-actions { display: flex; gap: 10px; }
+        .read-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #f06292, #d63384);
+            color: white;
+            border: none;
+            padding: 9px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .read-btn:hover { opacity: 0.85; }
+        .delete-btn {
+            background: #fff0f5;
+            color: #e57373;
+            border: 2px solid #ffcdd2;
+            padding: 9px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .delete-btn:hover { background: #e57373; color: white; border-color: #e57373; }
+
+        .edit-btn {
+            background: #fff8e1;
+            color: #f59e0b;
+            border: 2px solid #fde68a;
+            padding: 9px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .edit-btn:hover { background: #f59e0b; color: white; border-color: #f59e0b; }
+
+        /* ── EDIT MODAL ── */
+        .edit-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .edit-overlay.open { display: flex; }
+
+        .edit-modal {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 620px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 32px;
+        }
+
+        .edit-modal h2 {
+            font-family: 'Playfair Display', serif;
+            color: #c2185b;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .edit-modal input,
+        .edit-modal select,
+        .edit-modal textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #f8bbd9;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Lato', sans-serif;
+            margin-bottom: 14px;
+            outline: none;
+            background: #fff9fc;
+        }
+        .edit-modal input:focus,
+        .edit-modal select:focus,
+        .edit-modal textarea:focus { border-color: #d63384; }
+        .edit-modal textarea { resize: vertical; min-height: 160px; }
+
+        .edit-actions { display: flex; gap: 12px; margin-top: 6px; }
+        .update-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #f06292, #d63384);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .update-btn:hover { opacity: 0.85; }
+        .cancel-edit-btn {
+            background: #f5f5f5;
+            color: #888;
+            border: 2px solid #e0e0e0;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cancel-edit-btn:hover { background: #e0e0e0; }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #c2185b;
+            opacity: 0.5;
+        }
+        .empty-state .empty-icon { font-size: 60px; margin-bottom: 16px; }
+        .empty-state p { font-size: 16px; }
+
+        /* ── FULLSCREEN READER ── */
+        .reader-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .reader-overlay.open { display: flex; }
+
+        .reader-modal {
+            background: #fffaf7;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 780px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .reader-header {
+            background: linear-gradient(135deg, #f06292, #d63384);
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .reader-header-left .reader-title {
+            font-family: 'Playfair Display', serif;
+            color: white;
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .reader-header-left .reader-category {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .close-reader {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .close-reader:hover { background: rgba(255,255,255,0.4); }
+
+        .reader-controls {
+            background: white;
+            padding: 14px 28px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #fce4ec;
+        }
+
+        .reader-controls label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #c2185b;
+        }
+
+        .reader-controls select,
+        .reader-controls input[type="range"] {
+            border: 2px solid #f8bbd9;
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 13px;
+            outline: none;
+            background: #fff9fc;
+            cursor: pointer;
+        }
+
+        .font-size-display {
+            font-size: 13px;
+            color: #888;
+            min-width: 32px;
+        }
+
+        .reader-body {
+            padding: 32px;
+            overflow-y: auto;
+            flex: 1;
+            line-height: 1.9;
+            color: #333;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a href="index.html" class="back-btn">⬅ Back Home</a>
+    <h1 class="page-title">📚 Your Story Book</h1>
+</div>
+
+<!-- WRITE SECTION -->
+<div class="write-card">
+    <h2>✍️ Write a New Story</h2>
+    <input type="text" id="titleInput" placeholder="Story Title...">
+    <select id="categoryInput">
+        <option value="Romantic">💖 Romantic</option>
+        <option value="Funny">😂 Funny</option>
+        <option value="Bollywood">🎬 Bollywood Dialogue</option>
+        <option value="Motivation">🔥 Motivation</option>
+        <option value="Fairy Tale">🧚 Fairy Tale</option>
+    </select>
+    <textarea id="contentInput" placeholder="Write your story here..."></textarea>
+    <button class="save-btn" onclick="addStory()">💾 Save Story</button>
+</div>
+
+<!-- STORIES SECTION -->
+<div class="stories-section">
+    <h2>📖 Your Stories</h2>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterStories('All', this)">All</button>
+        <button class="filter-btn" onclick="filterStories('Romantic', this)">💖 Romantic</button>
+        <button class="filter-btn" onclick="filterStories('Funny', this)">😂 Funny</button>
+        <button class="filter-btn" onclick="filterStories('Bollywood', this)">🎬 Bollywood</button>
+        <button class="filter-btn" onclick="filterStories('Motivation', this)">🔥 Motivation</button>
+        <button class="filter-btn" onclick="filterStories('Fairy Tale', this)">🧚 Fairy Tale</button>
+    </div>
+
+    <div class="story-grid" id="storyGrid"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="edit-overlay" id="editOverlay">
+    <div class="edit-modal">
+        <h2>✏️ Edit Story</h2>
+        <input type="text" id="editTitle" placeholder="Story Title...">
+        <select id="editCategory">
+            <option value="Romantic">💖 Romantic</option>
+            <option value="Funny">😂 Funny</option>
+            <option value="Bollywood">🎬 Bollywood Dialogue</option>
+            <option value="Motivation">🔥 Motivation</option>
+            <option value="Fairy Tale">🧚 Fairy Tale</option>
+        </select>
+        <textarea id="editContent" placeholder="Edit your story..."></textarea>
+        <div class="edit-actions">
+            <button class="update-btn" onclick="saveEdit()">💾 Save Changes</button>
+            <button class="cancel-edit-btn" onclick="closeEdit()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="reader-overlay" id="readerOverlay">
+    <div class="reader-modal">
+        <div class="reader-header">
+            <div class="reader-header-left">
+                <div class="reader-title" id="readerTitle"></div>
+                <div class="reader-category" id="readerCategory"></div>
+            </div>
+            <button class="close-reader" onclick="closeReader()">✕</button>
+        </div>
+
+        <div class="reader-controls">
+            <label>Font:</label>
+            <select id="fontSelect" onchange="applyFont()">
+                <option value="'Lato', sans-serif">Lato (Default)</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Merriweather', serif">Merriweather</option>
+                <option value="'Dancing Script', cursive">Dancing Script</option>
+                <option value="'Crimson Text', serif">Crimson Text</option>
+                <option value="Georgia, serif">Georgia</option>
+            </select>
+
+            <label>Size:</label>
+            <input type="range" id="fontSizeRange" min="13" max="28" value="17" oninput="applyFontSize()">
+            <span class="font-size-display" id="fontSizeDisplay">17px</span>
+        </div>
+
+        <div class="reader-body" id="readerBody"></div>
+    </div>
+</div>
+
+<script>
+    let stories = JSON.parse(localStorage.getItem("soulbook_stories")) || [];
+    let currentFilter = "All";
+
+    const emojiMap = {
+        "Romantic": "💖", "Funny": "😂", "Bollywood": "🎬",
+        "Motivation": "🔥", "Fairy Tale": "🧚"
+    };
+
+    function addStory() {
+        let title = document.getElementById("titleInput").value.trim();
+        let content = document.getElementById("contentInput").value.trim();
+        let category = document.getElementById("categoryInput").value;
+
+        if (!title || !content) { alert("Please fill in title and story!"); return; }
+
+        stories.push({ title, content, category, date: new Date().toLocaleDateString() });
+        localStorage.setItem("soulbook_stories", JSON.stringify(stories));
+
+        document.getElementById("titleInput").value = "";
+        document.getElementById("contentInput").value = "";
+
+        renderStories();
+    }
+
+    function filterStories(filter, btn) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderStories();
+    }
+
+    function renderStories() {
+        let grid = document.getElementById("storyGrid");
+        let filtered = currentFilter === "All" ? stories : stories.filter(s => s.category === currentFilter);
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+                <div class="empty-icon">📭</div>
+                <p>No stories yet — write your first one above!</p>
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map((story, i) => {
+            let realIndex = stories.indexOf(story);
+            return `<div class="story-card">
+                <div class="story-emoji">${emojiMap[story.category] || "📖"}</div>
+                <div class="story-title">${story.title}</div>
+                <span class="story-category">${story.category}</span>
+                <div class="preview">${story.content}</div>
+                <div class="card-actions">
+                    <button class="read-btn" onclick="openReader(${realIndex})">📖 Read</button>
+                    <button class="edit-btn" onclick="openEdit(${realIndex})">✏️</button>
+                    <button class="delete-btn" onclick="deleteStory(${realIndex})">🗑</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function openReader(index) {
+        let story = stories[index];
+        document.getElementById("readerTitle").textContent = story.title;
+        document.getElementById("readerCategory").textContent = emojiMap[story.category] + " " + story.category;
+        document.getElementById("readerBody").textContent = story.content;
+        applyFont();
+        applyFontSize();
+        document.getElementById("readerOverlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeReader() {
+        document.getElementById("readerOverlay").classList.remove("open");
+        document.body.style.overflow = "";
+    }
+
+    function applyFont() {
+        let font = document.getElementById("fontSelect").value;
+        document.getElementById("readerBody").style.fontFamily = font;
+    }
+
+    function applyFontSize() {
+        let size = document.getElementById("fontSizeRange").value;
+        document.getElementById("readerBody").style.fontSize = size + "px";
+        document.getElementById("fontSizeDisplay").textContent = size + "px";
+    }
+
+    let editingIndex = -1;
+
+    function openEdit(index) {
+        editingIndex = index;
+        let story = stories[index];
+        document.getElementById("editTitle").value = story.title;
+        document.getElementById("editContent").value = story.content;
+        document.getElementById("editCategory").value = story.category;
+        document.getElementById("editOverlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function saveEdit() {
+        let title = document.getElementById("editTitle").value.trim();
+        let content = document.getElementById("editContent").value.trim();
+        let category = document.getElementById("editCategory").value;
+        if (!title || !content) { alert("Please fill in title and story!"); return; }
+        stories[editingIndex] = { title, content, category, date: stories[editingIndex].date };
+        localStorage.setItem("soulbook_stories", JSON.stringify(stories));
+        closeEdit();
+        renderStories();
+    }
+
+    function closeEdit() {
+        document.getElementById("editOverlay").classList.remove("open");
+        document.body.style.overflow = "";
+        editingIndex = -1;
+    }
+
+    document.getElementById("editOverlay").addEventListener("click", function(e) {
+        if (e.target === this) closeEdit();
+    });
+
+    function deleteStory(index) {
+        if (confirm("Delete this story?")) {
+            stories.splice(index, 1);
+            localStorage.setItem("soulbook_stories", JSON.stringify(stories));
+            renderStories();
+        }
+    }
+
+    // Close reader on overlay click
+    document.getElementById("readerOverlay").addEventListener("click", function(e) {
+        if (e.target === this) closeReader();
+    });
+
+    renderStories();
+</script>
+
+</body>
+</html>

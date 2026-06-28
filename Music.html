@@ -1,77 +1,239 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Music - SoulBook</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Advanced Music Player</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+    height:100vh;
+    width:100vw;
+    overflow:hidden;
+}
+
+/* FULL SCREEN PLAYER */
+.player{
+    width:100%;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+/* TITLE */
+h2{
+    font-size:40px;
+    margin:10px;
+}
+
+/* DISC */
+.disc{
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:black;
+    margin:20px;
+    animation:spin 4s linear infinite;
+    animation-play-state:paused;
+}
+
+@keyframes spin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+/* FILE INPUT */
+input[type="file"]{
+    font-size:18px;
+    margin:10px;
+}
+
+/* SONG TITLE */
+h3{
+    font-size:28px;
+}
+
+/* PROGRESS BAR */
+#progress{
+    width:60%;
+    height:6px;
+    margin:10px;
+}
+
+/* CONTROLS */
+button{
+    padding:15px 20px;
+    margin:8px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.play{background:#ff4d6d;color:white;}
+.next,.prev{background:#333;color:white;}
+.heart{background:pink;}
+
+/* VOLUME */
+#volume{
+    width:200px;
+    margin-top:10px;
+}
+
+/* PLAYLIST */
+#playlist{
+    width:60%;
+    max-height:200px;
+    overflow-y:auto;
+    margin-top:20px;
+    background:rgba(255,255,255,0.3);
+    padding:10px;
+    border-radius:10px;
+}
+
+.song{
+    text-align:left;
+    padding:10px;
+    cursor:pointer;
+    font-size:18px;
+}
+.song:hover{
+    background:rgba(255,255,255,0.5);
+}
+.active{
+    color:#ff4d6d;
+    font-weight:bold;
+}
+</style>
 </head>
+
 <body>
 
-<h1>🎵 My Personal Playlist</h1>
+<div class="player">
 
-<a href="index.html">⬅ Back Home</a>
+<h2>🎧 My Music Player</h2>
 
-<h3>➕ Add Your Songs</h3>
+<input type="file" id="fileInput" multiple accept="audio/*">
 
-<input type="file" id="songInput" accept="audio/*">
-<button onclick="addSong()">Add to Playlist</button>
+<div class="disc" id="disc"></div>
 
-<h2>🎧 Your Playlist</h2>
-<ul id="playlist"></ul>
+<audio id="audio"></audio>
 
-<audio id="player" controls style="margin-top:20px;"></audio>
+<h3 id="title">No Song Selected</h3>
+
+<!-- PROGRESS -->
+<input type="range" id="progress" value="0">
+
+<!-- CONTROLS -->
+<div>
+<button class="prev" onclick="prevSong()">⏮</button>
+<button class="play" onclick="togglePlay()" id="playBtn">▶</button>
+<button class="next" onclick="nextSong()">⏭</button>
+<button class="heart" onclick="likeSong()">❤️</button>
+</div>
+
+<!-- VOLUME -->
+Volume:
+<input type="range" id="volume" min="0" max="1" step="0.01">
+
+<!-- PLAYLIST -->
+<div id="playlist"></div>
+
+</div>
 
 <script>
-    let songs = JSON.parse(localStorage.getItem("soulbook_songs")) || [];
+let songs = [];
+let current = 0;
+let audio = document.getElementById("audio");
+let playing = false;
 
-    function renderSongs(){
-        let list = document.getElementById("playlist");
-        list.innerHTML = "";
+let disc = document.getElementById("disc");
 
-        songs.forEach((song, index) => {
-            let li = document.createElement("li");
+document.getElementById("fileInput").addEventListener("change", function(e){
+    songs = Array.from(e.target.files);
+    renderList();
+    loadSong(0);
+});
 
-            li.innerHTML = `
-                🎶 Song ${index + 1}
-                <button onclick="playSong(${index})">Play</button>
-                <button onclick="deleteSong(${index})">Delete</button>
-            `;
+function renderList(){
+    let list = document.getElementById("playlist");
+    list.innerHTML = "";
+    songs.forEach((song,i)=>{
+        let div = document.createElement("div");
+        div.className = "song";
+        div.innerText = song.name;
+        div.onclick = ()=>loadSong(i);
+        list.appendChild(div);
+    });
+}
 
-            list.appendChild(li);
-        });
+function loadSong(i){
+    current = i;
+    audio.src = URL.createObjectURL(songs[i]);
+    document.getElementById("title").innerText = songs[i].name;
+    highlight();
+    playSong();
+}
+
+function highlight(){
+    document.querySelectorAll(".song").forEach((el,i)=>{
+        el.classList.toggle("active", i===current);
+    });
+}
+
+function togglePlay(){
+    if(playing){
+        audio.pause();
+        playing=false;
+        document.getElementById("playBtn").innerText="▶";
+        disc.style.animationPlayState="paused";
+    } else {
+        playSong();
     }
+}
 
-    function addSong(){
-        let file = document.getElementById("songInput").files[0];
+function playSong(){
+    audio.play();
+    playing=true;
+    document.getElementById("playBtn").innerText="⏸";
+    disc.style.animationPlayState="running";
+}
 
-        if(!file){
-            alert("Please select a song!");
-            return;
-        }
+function nextSong(){
+    current = (current+1)%songs.length;
+    loadSong(current);
+}
 
-        let reader = new FileReader();
+function prevSong(){
+    current = (current-1+songs.length)%songs.length;
+    loadSong(current);
+}
 
-        reader.onload = function(e){
-            songs.push(e.target.result);
-            localStorage.setItem("soulbook_songs", JSON.stringify(songs));
-            renderSongs();
-        }
+function likeSong(){
+    alert("❤️ Added to favorites!");
+}
 
-        reader.readAsDataURL(file);
-    }
+/* PROGRESS */
+audio.addEventListener("timeupdate", ()=>{
+    document.getElementById("progress").value =
+    (audio.currentTime/audio.duration)*100 || 0;
+});
 
-    function playSong(index){
-        let player = document.getElementById("player");
-        player.src = songs[index];
-        player.play();
-    }
+document.getElementById("progress").addEventListener("input", function(){
+    audio.currentTime = (this.value/100)*audio.duration;
+});
 
-    function deleteSong(index){
-        songs.splice(index, 1);
-        localStorage.setItem("soulbook_songs", JSON.stringify(songs));
-        renderSongs();
-    }
+/* VOLUME */
+document.getElementById("volume").addEventListener("input", function(){
+    audio.volume = this.value;
+});
 
-    renderSongs();
+audio.addEventListener("ended", nextSong);
 </script>
 
 </body>

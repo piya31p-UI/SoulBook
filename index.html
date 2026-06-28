@@ -1,10 +1,159 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SoulBook</title>
-    <link rel="stylesheet" href="style.css">
+<title>SoulBook</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    width:100vw;
+    font-family:Arial;
+    overflow:hidden;
+
+    /* 🌸 pink cloudy background */
+    background: radial-gradient(circle at top left, #ffd1e8, transparent 50%),
+                radial-gradient(circle at bottom right, #c9e7ff, transparent 50%),
+                linear-gradient(135deg, #ffe4f3, #e6f7ff);
+}
+
+/* FULL SCREEN CENTER */
+.wrapper{
+    height:100vh;
+    width:100vw;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* GLASS CLOUD CARD */
+.home-card{
+    width:88%;
+    height:92vh;
+    border-radius:30px;
+
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow: 0 15px 40px rgba(255, 120, 180, 0.25);
+    padding:25px;
+    overflow-y:auto;
+    text-align:center;
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+/* TITLE */
+.welcome{
+    font-size:42px;
+    color:#ff4d88;
+    margin:10px 0;
+    text-shadow:0 2px 10px rgba(255, 100, 160, 0.3);
+}
+
+/* PROFILE */
+.profile-card{
+    margin:20px 0;
+}
+
+.profile-pic{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    object-fit:cover;
+
+    border:4px solid #ff7fb2;
+    box-shadow:0 10px 20px rgba(255, 120, 180, 0.3);
+}
+
+/* INPUT */
+input[type="file"]{
+    margin-top:10px;
+    font-size:14px;
+}
+
+/* BUTTON */
+button{
+    padding:10px 18px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+
+    background: linear-gradient(135deg,#ff4d88,#ff8fb3);
+    color:white;
+    font-size:14px;
+
+    box-shadow:0 5px 15px rgba(255, 77, 136, 0.3);
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+/* GREETING */
+#greeting{
+    font-size:30px;
+    color:#ff4d88;
+    margin:10px 0;
+}
+
+#time{
+    font-size:18px;
+    color:#666;
+}
+
+/* NAME */
+#nameText{
+    font-size:24px;
+    color:#333;
+}
+
+/* MENU GRID */
+.menu{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap:15px;
+}
+
+.menu a{
+    text-decoration:none;
+    padding:14px;
+    border-radius:15px;
+
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(10px);
+
+    color:#444;
+    font-size:15px;
+    font-weight:bold;
+
+    box-shadow:0 5px 15px rgba(255, 150, 200, 0.2);
+    transition:0.3s;
+}
+
+.menu a:hover{
+    background: linear-gradient(135deg,#ff4d88,#ff9fc2);
+    color:white;
+    transform:translateY(-3px);
+}
+
+/* SCROLL */
+.home-card::-webkit-scrollbar{
+    width:6px;
+}
+.home-card::-webkit-scrollbar-thumb{
+    background:#ff4d88;
+    border-radius:10px;
+}
+</style>
 </head>
+
 <body>
+
+<div class="wrapper">
 
 <div class="home-card">
 
@@ -12,24 +161,20 @@
 
     <div class="profile-card">
 
-    <img id="profilePic" class="profile-pic" src="" alt="Profile">
+        <img id="profilePic" class="profile-pic" src="" alt="Profile">
 
-    <br><br>
+        <br>
 
-    <input type="file" id="profileInput" accept="image/*">
+        <input type="file" id="profileInput" accept="image/*">
 
-    <br><br>
+        <br>
 
-    <button onclick="saveProfilePic()">Save Photo</button>
+        <button onclick="saveProfilePic()">Save Photo</button>
 
-    <h2 id="greetingText"></h2>
-
-</div>
+    </div>
 
     <h1 id="greeting"></h1>
-
     <p id="time"></p>
-
     <h2 id="nameText">Soul User</h2>
 
     <div class="menu">
@@ -37,46 +182,64 @@
         <a href="diary.html">📖 My Diary</a>
         <a href="Music.html">🎵 Music</a>
         <a href="memories.html">📸 Memories</a>
-        <a href="voicephoto.html">voicenote and photo</a>
-        <a href="relax.html" class="btn">🌙 Relax Mode</a>
+        <a href="voicephoto.html">🎤 Voice & Photo</a>
+        <a href="relax.html">🌙 Relax Mode</a>
     </div>
 
 </div>
 
+</div>
+
 <script>
-    // 👤 Name
-    let name = localStorage.getItem("soulbook_name");
+// NAME
+let name = localStorage.getItem("soulbook_name");
 
-    if(!name){
-        name = prompt("Enter your name for SoulBook:");
-        localStorage.setItem("soulbook_name", name);
-    }
+if(!name){
+    name = prompt("Enter your name for SoulBook:");
+    localStorage.setItem("soulbook_name", name);
+}
 
-    document.getElementById("nameText").innerText = "✨ " + name;
+document.getElementById("nameText").innerText = "✨ " + name;
 
-    // ⏰ Time + Greeting
-    function updateTime(){
-        let now = new Date();
-        let hours = now.getHours();
+// TIME + GREETING
+function updateTime(){
+    let now = new Date();
+    let h = now.getHours();
 
-        document.getElementById("time").innerText =
-            "🕒 " + now.toLocaleTimeString();
+    document.getElementById("time").innerText =
+        "🕒 " + now.toLocaleTimeString();
 
-        let greeting = "";
+    let greet = "";
 
-        if(hours < 12){
-            greeting = "🌸 Good Morning";
-        } else if(hours < 18){
-            greeting = "🌼 Good Afternoon";
-        } else {
-            greeting = "🌙 Good Night";
+    if(h < 12) greet = "🌸 Good Morning";
+    else if(h < 18) greet = "🌼 Good Afternoon";
+    else greet = "🌙 Good Night";
+
+    document.getElementById("greeting").innerText = greet;
+}
+
+setInterval(updateTime, 1000);
+updateTime();
+
+// PROFILE SAVE
+function saveProfilePic(){
+    let file = document.getElementById("profileInput").files[0];
+
+    if(file){
+        let reader = new FileReader();
+        reader.onload = function(e){
+            localStorage.setItem("soulbook_profile", e.target.result);
+            document.getElementById("profilePic").src = e.target.result;
         }
-
-        document.getElementById("greeting").innerText = greeting;
+        reader.readAsDataURL(file);
     }
+}
 
-    setInterval(updateTime, 1000);
-    updateTime();
+// LOAD PROFILE
+let img = localStorage.getItem("soulbook_profile");
+if(img){
+    document.getElementById("profilePic").src = img;
+}
 </script>
 
 </body>
