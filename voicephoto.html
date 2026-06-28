@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memories - SoulBook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📸🎤 My Memories</h1>
+
+<a href="index.html">⬅ Back Home</a>
+
+<hr>
+
+<!-- 📸 PHOTO UPLOAD -->
+<h2>📸 Add Photo Memory</h2>
+
+<input type="file" id="photoInput" accept="image/*">
+<button onclick="savePhoto()">Save Photo</button>
+
+<hr>
+
+<!-- 🎤 VOICE RECORD -->
+<h2>🎤 Add Voice Note</h2>
+
+<button onclick="startRecording()">Start Recording</button>
+<button onclick="stopRecording()">Stop</button>
+
+<p id="status"></p>
+
+<hr>
+
+<!-- 🧠 MEMORY LIST -->
+<h2>💖 Your Memories</h2>
+
+<div id="memoryList"></div>
+
+<script>
+let memories = JSON.parse(localStorage.getItem("soulbook_memories")) || [];
+
+let mediaRecorder;
+let audioChunks = [];
+
+/* ---------------- PHOTO ---------------- */
+function savePhoto() {
+    let input = document.getElementById("photoInput");
+
+    if(input.files.length === 0){
+        alert("Select a photo!");
+        return;
+    }
+
+    let file = input.files[0];
+    let reader = new FileReader();
+
+    reader.onload = function(e){
+        memories.push({
+            type: "photo",
+            data: e.target.result
+        });
+
+        localStorage.setItem("soulbook_memories", JSON.stringify(memories));
+        renderMemories();
+    };
+
+    reader.readAsDataURL(file);
+}
+
+/* ---------------- VOICE ---------------- */
+function startRecording() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.start();
+        document.getElementById("status").innerText = "🎤 Recording...";
+
+        mediaRecorder.ondataavailable = e => {
+            audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            let audioBlob = new Blob(audioChunks);
+            let audioUrl = URL.createObjectURL(audioBlob);
+
+            memories.push({
+                type: "audio",
+                data: audioUrl
+            });
+
+            localStorage.setItem("soulbook_memories", JSON.stringify(memories));
+            renderMemories();
+        };
+    });
+}
+
+function stopRecording() {
+    if(mediaRecorder){
+        mediaRecorder.stop();
+        document.getElementById("status").innerText = "✅ Saved Voice Note";
+    }
+}
+
+/* ---------------- DISPLAY ---------------- */
+function renderMemories() {
+    let div = document.getElementById("memoryList");
+    div.innerHTML = "";
+
+    memories.forEach((m, index) => {
+
+        let box = document.createElement("div");
+        box.classList.add("memory-box");
+
+        if(m.type === "photo"){
+            box.innerHTML = `
+                📸 <br>
+                <img src="${m.data}" class="memory-img">
+                <br>
+                <button onclick="deleteMemory(${index})">Delete</button>
+                <hr>
+            `;
+        }
+
+        if(m.type === "audio"){
+            box.innerHTML = `
+                🎤 <br>
+                <audio controls src="${m.data}"></audio>
+                <br>
+                <button onclick="deleteMemory(${index})">Delete</button>
+                <hr>
+            `;
+        }
+
+        div.appendChild(box);
+    });
+}
+
+function deleteMemory(index){
+    memories.splice(index, 1);
+    localStorage.setItem("soulbook_memories", JSON.stringify(memories));
+    renderMemories();
+}
+
+renderMemories();
+</script>
+
+</body>
+</html>

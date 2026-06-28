@@ -1,0 +1,236 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffd1dc, #ffe6f0, #e6f0ff);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: #5a2a42;
+
+}
+.welcome {
+    font-size: 24px;
+    color: #ff69b4;
+    margin-top: 10px;
+
+    text-shadow: 0 0 10px rgba(255,105,180,0.4);
+
+    animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 🌸 MAIN HOME CARD */
+.home-card {
+    width: 90%;
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+
+    border-radius: 25px;
+
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(12px);
+
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.25);
+}
+
+/* 🌸 TITLE */
+h1 {
+    font-size: 32px;
+    color: #ff4fa3;
+    text-shadow: 0 0 12px rgba(255, 105, 180, 0.3);
+    margin-top: 20px;
+}
+
+/* 🌸 GREETING TEXT */
+#time {
+    font-size: 18px;
+    color: #7a3b55;
+}
+
+#nameText {
+    color: #ff4fa3;
+    margin-top: 10px;
+}
+
+/* 👤 PROFILE PICTURE */
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ff2e93;
+}
+
+/* 🌷 MENU */
+.menu {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 🌸 MENU BUTTONS */
+.menu a {
+    width: 220px;
+    padding: 14px;
+    border-radius: 25px;
+
+    text-decoration: none;
+    font-weight: bold;
+
+    color: #5a2a42;
+    background: rgba(255, 182, 193, 0.4);
+
+    box-shadow: 0 6px 18px rgba(255, 105, 180, 0.25);
+    transition: 0.3s ease;
+}
+
+/* hover effect */
+.menu a:hover {
+    transform: translateY(-5px) scale(1.05);
+    background: #ff69b4;
+    color: white;
+}
+
+/* 🌸 INPUTS */
+input, textarea, select {
+    border-radius: 12px;
+    padding: 10px;
+    border: none;
+    margin-top: 10px;
+
+    width: 80%;
+    max-width: 350px;
+
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* 🌸 BUTTONS */
+button {
+    margin-top: 10px;
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 20px;
+
+    background: linear-gradient(135deg, #ff69b4, #ffb6c1);
+    color: white;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #ff1493;
+}
+
+/* 🌸 LISTS */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: rgba(255, 255, 255, 0.6);
+    margin: 10px auto;
+    padding: 10px;
+    width: 80%;
+    max-width: 400px;
+
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* 🎧 AUDIO */
+audio {
+    width: 80%;
+    max-width: 350px;
+    margin-top: 10px;
+}
+.memory-box {
+    background: #fff0f7;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 15px;
+}
+
+.memory-img {
+    width: 200px;
+    border-radius: 10px;
+}
+
+button {
+    margin-top: 5px;
+}
+/* 🌙 RELAX MODE / SNAKE GAME STYLE */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffc1e3, #ffe6f2);
+    text-align: center;
+}
+
+/* 🌸 TITLE */
+h1 {
+    color: #ff2e93;
+    margin-top: 15px;
+}
+
+/* 💬 TEXT */
+p {
+    color: #6b2c5a;
+    font-size: 14px;
+}
+
+/* 🎮 GAME CANVAS */
+canvas {
+    background: white;
+    border: 3px solid #ff2e93;
+    border-radius: 12px;
+    margin-top: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* 🔘 BUTTON AREA */
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 12px;
+    background: #ff2e93;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* ✨ BUTTON HOVER */
+button:hover {
+    background: #d81b60;
+    transform: scale(1.05);
+}
+
+/* 🧘 TOP BOX (buttons container if you use div) */
+.box {
+    margin-top: 10px;
+}
+
+/* 🌙 HOME LINK */
+a button {
+    text-decoration: none;
+}

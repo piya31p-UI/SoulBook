@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Books - SoulBook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📚 Your Personal Story Book</h1>
+
+<a href="index.html">⬅ Back Home</a>
+
+<hr>
+
+<!-- ✨ CREATE STORY -->
+<h2>➕ Write Your Own Story</h2>
+
+<input type="text" id="title" placeholder="Story Title">
+
+<br><br>
+
+<!-- CATEGORY SELECT -->
+<select id="category">
+    <option value="Romantic">💖 Romantic</option>
+    <option value="Funny">😂 Funny</option>
+    <option value="Bollywood">🎬 Bollywood Dialogue</option>
+    <option value="Motivation">🔥 Motivation</option>
+    <option value="Fairy Tale">🧚 Fairy Tale</option>
+</select>
+
+<br><br>
+
+<textarea id="content" rows="6" placeholder="Write your story..."></textarea>
+
+<br><br>
+
+<button onclick="addStory()">Save Story</button>
+
+<hr>
+
+<!-- 📖 FILTER -->
+<h2>📖 Your Stories</h2>
+
+<select id="filter" onchange="renderStories()">
+    <option value="All">All</option>
+    <option value="Romantic">💖 Romantic</option>
+    <option value="Funny">😂 Funny</option>
+    <option value="Bollywood">🎬 Bollywood</option>
+    <option value="Motivation">🔥 Motivation</option>
+    <option value="Fairy Tale">🧚 Fairy Tale</option>
+</select>
+
+<br><br>
+
+<ul id="storyList"></ul>
+
+<script>
+    let stories = JSON.parse(localStorage.getItem("soulbook_stories")) || [];
+
+    function addStory(){
+        let title = document.getElementById("title").value;
+        let content = document.getElementById("content").value;
+        let category = document.getElementById("category").value;
+
+        if(title === "" || content === ""){
+            alert("Please write title and story!");
+            return;
+        }
+
+        let newStory = {
+            title,
+            content,
+            category
+        };
+
+        stories.push(newStory);
+        localStorage.setItem("soulbook_stories", JSON.stringify(stories));
+
+        document.getElementById("title").value = "";
+        document.getElementById("content").value = "";
+
+        renderStories();
+    }
+
+    function renderStories(){
+        let list = document.getElementById("storyList");
+        list.innerHTML = "";
+
+        let filterValue = document.getElementById("filter").value;
+
+        let filteredStories = stories.filter(story => {
+            return filterValue === "All" || story.category === filterValue;
+        });
+
+        filteredStories.forEach((story, index) => {
+            let li = document.createElement("li");
+
+            li.innerHTML = `
+                <b>${getEmoji(story.category)} ${story.title}</b>
+                <br>
+                <small>${story.category}</small>
+                <br><br>
+                <button onclick="readStory(${index})">Read</button>
+                <button onclick="deleteStory(${index})">Delete</button>
+                <hr>
+            `;
+
+            list.appendChild(li);
+        });
+    }
+
+    function getEmoji(category){
+        switch(category){
+            case "Romantic": return "💖";
+            case "Funny": return "😂";
+            case "Bollywood": return "🎬";
+            case "Motivation": return "🔥";
+            case "Fairy Tale": return "🧚";
+            default: return "📖";
+        }
+    }
+
+    function readStory(index){
+        alert(
+            "📖 " + stories[index].title +
+            "\n(" + stories[index].category + ")\n\n" +
+            stories[index].content
+        );
+    }
+
+    function deleteStory(index){
+        stories.splice(index, 1);
+        localStorage.setItem("soulbook_stories", JSON.stringify(stories));
+        renderStories();
+    }
+
+    renderStories();
+</script>
+
+</body>
+</html>

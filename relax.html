@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Snake Game - Responsive Mode</title>
+    <style>
+        body {
+            background-color: #1a1a24;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+        h2 {
+            color: #ff99cc;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        .controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .sys-btn {
+            background-color: #3a3a4c;
+            color: white;
+            border: 2px solid #ff2e93;
+            padding: 8px 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .sys-btn:hover {
+            background-color: #ff2e93;
+            color: #111116;
+        }
+        canvas {
+            border: 4px solid #ff2e93;
+            background-color: #111116;
+            box-shadow: 0 0 25px rgba(255, 46, 147, 0.4);
+        }
+        .dpad {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(3, 60px);
+            gap: 8px;
+            justify-content: center;
+            align-content: center;
+        }
+        .arrow-btn {
+            background-color: #25252f;
+            border: 2px solid #baffc9;
+            color: #baffc9;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 0 #1b1b22;
+            transition: all 0.1s ease;
+        }
+        .arrow-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+            background-color: #baffc9;
+            color: #111116;
+        }
+        #btn-up { grid-column: 2; grid-row: 1; }
+        #btn-left { grid-column: 1; grid-row: 2; }
+        #btn-right { grid-column: 3; grid-row: 2; }
+        #btn-down { grid-column: 2; grid-row: 3; }
+    </style>
+</head>
+<body>
+
+    <h2>🐍 Neon Snake (Responsive)</h2>
+    
+    <div class="controls">
+        <button class="sys-btn" id="start-btn" onclick="toggleStart()">Start Game</button>
+        <button class="sys-btn" id="pause-btn" onclick="togglePause()">Pause</button>
+    </div>
+
+    <canvas id="game" width="400" height="400"></canvas>
+
+    <div class="dpad">
+        <button class="arrow-btn" id="btn-up" onclick="changeDirection('UP')">▲</button>
+        <button class="arrow-btn" id="btn-left" onclick="changeDirection('LEFT')">◀</button>
+        <button class="arrow-btn" id="btn-right" onclick="changeDirection('RIGHT')">▶</button>
+        <button class="arrow-btn" id="btn-down" onclick="changeDirection('DOWN')">▼</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+
+        const box = 20;
+        let snake = [{ x: 200, y: 200 }];
+        let direction = "NONE"; // Start still! Wait for user input direction
+        let food = randomFood();
+
+        let gameStarted = false; 
+        let isPaused = false;   
+        const speed = 2; // Super slow mode stays active
+        let lastTime = 0;
+
+        function randomFood() {
+            return {
+                x: Math.floor(Math.random() * 20) * box,
+                y: Math.floor(Math.random() * 20) * box
+            };
+        }
+
+        function changeDirection(newDir) {
+            if (!gameStarted || isPaused) return;
+
+            // If snake is still, let it go ANY direction, including LEFT!
+            if (direction === "NONE") {
+                direction = newDir;
+                return;
+            }
+
+            // Standard blocking rules so snake doesn't fold backwards into itself
+            if (newDir === "LEFT" && direction !== "RIGHT") direction = "LEFT";
+            if (newDir === "RIGHT" && direction !== "LEFT") direction = "RIGHT";
+            if (newDir === "UP" && direction !== "DOWN") direction = "UP";
+            if (newDir === "DOWN" && direction !== "UP") direction = "DOWN";
+        }
+
+        document.addEventListener("keydown", function (e) {
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
+                e.preventDefault();
+            }
+            if (e.key === "ArrowLeft") changeDirection("LEFT");
+            if (e.key === "ArrowRight") changeDirection("RIGHT");
+            if (e.key === "ArrowUp") changeDirection("UP");
+            if (e.key === "ArrowDown") changeDirection("DOWN");
+        });
+
+        function toggleStart() {
+            resetGame();
+            gameStarted = true;
+            isPaused = false;
+            document.getElementById("start-btn").innerText = "Restart";
+            document.getElementById("pause-btn").innerText = "Pause";
+        }
+
+        function togglePause() {
+            if (!gameStarted) return;
+            isPaused = !isPaused;
+            document.getElementById("pause-btn").innerText = isPaused ? "Resume" : "Pause";
+        }
+
+        function resetGame() {
+            snake = [{ x: 200, y: 200 }];
+            direction = "NONE"; // Fresh reset leaves snake sitting peacefully
+            food = randomFood();
+        }
+
+        function update() {
+            if (!gameStarted || isPaused || direction === "NONE") return;
+
+            let headX = snake[0].x;
+            let headY = snake[0].y;
+
+            if (direction === "LEFT") headX -= box;
+            if (direction === "RIGHT") headX += box;
+            if (direction === "UP") headY -= box;
+            if (direction === "DOWN") headY += box;
+
+            // Wall check
+            if (headX < 0 || headY < 0 || headX >= 400 || headY >= 400) {
+                alert("💔 Game Over! You hit the wall.");
+                gameStarted = false;
+                document.getElementById("start-btn").innerText = "Play Again";
+                return;
+            }
+
+            // Self check
+            for (let i = 0; i < snake.length; i++) {
+                if (headX === snake[i].x && headY === snake[i].y) {
+                    alert("💔 Game Over! You hit yourself.");
+                    gameStarted = false;
+                    document.getElementById("start-btn").innerText = "Play Again";
+                    return;
+                }
+            }
+
+            if (headX === food.x && headY === food.y) {
+                food = randomFood();
+            } else {
+                snake.pop();
+            }
+
+            let newHead = { x: headX, y: headY };
+            snake.unshift(newHead);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, 400, 400);
+
+            // Snake Rendering
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i === 0) ? "#ff2e93" : "#ff99cc";
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeStyle = "#111116";
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            // Food Rendering
+            ctx.fillStyle = "#ff4d4d";
+            ctx.fillRect(food.x, food.y, box, box);
+
+            if (gameStarted && isPaused) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+                ctx.fillRect(0, 0, 400, 400);
+                ctx.fillStyle = "white";
+                ctx.font = "bold 22px sans-serif";
+                ctx.fillText("⏸️ GAME PAUSED", 115, 210);
+            }
+            
+            // Helpful helper text for first-time movement direction selection
+            if (gameStarted && direction === "NONE") {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+                ctx.font = "14px sans-serif";
+                ctx.fillText("Tap any arrow below to choose start direction!", 65, 300);
+            }
+        }
+
+        function gameLoop(time) {
+            requestAnimationFrame(gameLoop);
+            if (time - lastTime < 1000 / speed) return;
+            lastTime = time;
+            update();
+            draw();
+        }
+
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>

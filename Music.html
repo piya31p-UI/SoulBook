@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Music - SoulBook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🎵 My Personal Playlist</h1>
+
+<a href="index.html">⬅ Back Home</a>
+
+<h3>➕ Add Your Songs</h3>
+
+<input type="file" id="songInput" accept="audio/*">
+<button onclick="addSong()">Add to Playlist</button>
+
+<h2>🎧 Your Playlist</h2>
+<ul id="playlist"></ul>
+
+<audio id="player" controls style="margin-top:20px;"></audio>
+
+<script>
+    let songs = JSON.parse(localStorage.getItem("soulbook_songs")) || [];
+
+    function renderSongs(){
+        let list = document.getElementById("playlist");
+        list.innerHTML = "";
+
+        songs.forEach((song, index) => {
+            let li = document.createElement("li");
+
+            li.innerHTML = `
+                🎶 Song ${index + 1}
+                <button onclick="playSong(${index})">Play</button>
+                <button onclick="deleteSong(${index})">Delete</button>
+            `;
+
+            list.appendChild(li);
+        });
+    }
+
+    function addSong(){
+        let file = document.getElementById("songInput").files[0];
+
+        if(!file){
+            alert("Please select a song!");
+            return;
+        }
+
+        let reader = new FileReader();
+
+        reader.onload = function(e){
+            songs.push(e.target.result);
+            localStorage.setItem("soulbook_songs", JSON.stringify(songs));
+            renderSongs();
+        }
+
+        reader.readAsDataURL(file);
+    }
+
+    function playSong(index){
+        let player = document.getElementById("player");
+        player.src = songs[index];
+        player.play();
+    }
+
+    function deleteSong(index){
+        songs.splice(index, 1);
+        localStorage.setItem("soulbook_songs", JSON.stringify(songs));
+        renderSongs();
+    }
+
+    renderSongs();
+</script>
+
+</body>
+</html>

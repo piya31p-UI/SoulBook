@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diary - SoulBook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📖 My Private Diary</h1>
+
+<a href="index.html">⬅ Back Home</a>
+
+<div id="setup">
+    <h3>🔐 Set your own password</h3>
+    <input type="password" id="newPass" placeholder="Create Password">
+    <button onclick="savePassword()">Save Password</button>
+</div>
+
+<div id="login" style="display:none;">
+    <h3>🔑 Enter Password</h3>
+    <input type="password" id="passInput" placeholder="Enter Password">
+    <button onclick="checkPassword()">Open Diary</button>
+</div>
+
+<div id="diary" style="display:none;">
+    <h2>Write your feelings 💭</h2>
+    <textarea rows="10" cols="40" placeholder="Write here..."></textarea>
+
+    <h3>Mood Tracker 😊😢😡</h3>
+    <select>
+        <option>Happy 😊</option>
+        <option>Sad 😢</option>
+        <option>Angry 😡</option>
+        <option>Calm 😌</option>
+    </select>
+</div>
+
+<script>
+    // check if password already exists
+    let savedPass = localStorage.getItem("soulbook_pass");
+
+    if(savedPass){
+        document.getElementById("setup").style.display = "none";
+        document.getElementById("login").style.display = "block";
+    }
+
+    function savePassword(){
+        let pass = document.getElementById("newPass").value;
+
+        if(pass.length < 4){
+            alert("Password too short!");
+            return;
+        }
+
+        localStorage.setItem("soulbook_pass", pass);
+
+        alert("Password saved successfully!");
+        
+        document.getElementById("setup").style.display = "none";
+        document.getElementById("login").style.display = "block";
+    }
+
+    function checkPassword(){
+        let input = document.getElementById("passInput").value;
+        let saved = localStorage.getItem("soulbook_pass");
+
+        if(input === saved){
+            document.getElementById("login").style.display = "none";
+            document.getElementById("diary").style.display = "block";
+        } else {
+            alert("Wrong password!");
+        }
+    }
+</script>
+
+</body>
+</html>

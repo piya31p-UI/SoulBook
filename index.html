@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SoulBook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="home-card">
+
+    <h1 class="welcome">🌸 Welcome to SoulBook 🌸</h1>
+
+    <div class="profile-card">
+
+    <img id="profilePic" class="profile-pic" src="" alt="Profile">
+
+    <br><br>
+
+    <input type="file" id="profileInput" accept="image/*">
+
+    <br><br>
+
+    <button onclick="saveProfilePic()">Save Photo</button>
+
+    <h2 id="greetingText"></h2>
+
+</div>
+
+    <h1 id="greeting"></h1>
+
+    <p id="time"></p>
+
+    <h2 id="nameText">Soul User</h2>
+
+    <div class="menu">
+        <a href="books.html">📚 Books & Stories</a>
+        <a href="diary.html">📖 My Diary</a>
+        <a href="music.html">🎵 Music</a>
+        <a href="memories.html">📸 Memories</a>
+        <a href="voicephoto.html">voicenote and photo</a>
+        <a href="relax.html" class="btn">🌙 Relax Mode</a>
+    </div>
+
+</div>
+
+<script>
+    // 👤 Name
+    let name = localStorage.getItem("soulbook_name");
+
+    if(!name){
+        name = prompt("Enter your name for SoulBook:");
+        localStorage.setItem("soulbook_name", name);
+    }
+
+    document.getElementById("nameText").innerText = "✨ " + name;
+
+    // ⏰ Time + Greeting
+    function updateTime(){
+        let now = new Date();
+        let hours = now.getHours();
+
+        document.getElementById("time").innerText =
+            "🕒 " + now.toLocaleTimeString();
+
+        let greeting = "";
+
+        if(hours < 12){
+            greeting = "🌸 Good Morning";
+        } else if(hours < 18){
+            greeting = "🌼 Good Afternoon";
+        } else {
+            greeting = "🌙 Good Night";
+        }
+
+        document.getElementById("greeting").innerText = greeting;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
+</body>
+</html>

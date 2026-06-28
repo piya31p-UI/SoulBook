@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memories - SoulBook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📸 Memories Calendar</h1>
+
+<a href="index.html">⬅ Back Home</a>
+
+<h3>📅 Select Important Date</h3>
+<input type="date" id="dateInput">
+
+<h3>📝 Write Memory</h3>
+<textarea id="memoryText" rows="5" cols="40" placeholder="Write your memory..."></textarea>
+
+<br><br>
+<button onclick="saveMemory()">Save Memory</button>
+
+<h2>🌸 Saved Memories</h2>
+<ul id="memoryList"></ul>
+
+<script>
+    let memories = JSON.parse(localStorage.getItem("soulbook_memories")) || {};
+
+    function saveMemory(){
+        let date = document.getElementById("dateInput").value;
+        let text = document.getElementById("memoryText").value;
+
+        if(!date || !text){
+            alert("Please select date and write memory!");
+            return;
+        }
+
+        memories[date] = text;
+
+        localStorage.setItem("soulbook_memories", JSON.stringify(memories));
+
+        renderMemories();
+
+        document.getElementById("memoryText").value = "";
+    }
+
+    function renderMemories(){
+        let list = document.getElementById("memoryList");
+        list.innerHTML = "";
+
+        for(let date in memories){
+            let li = document.createElement("li");
+
+            li.innerHTML = `
+                📅 <b>${date}</b> <br>
+                💭 ${memories[date]} <br>
+                <button onclick="deleteMemory('${date}')">Delete</button>
+                <hr>
+            `;
+
+            list.appendChild(li);
+        }
+    }
+
+    function deleteMemory(date){
+        delete memories[date];
+        localStorage.setItem("soulbook_memories", JSON.stringify(memories));
+        renderMemories();
+    }
+
+    renderMemories();
+</script>
+
+</body>
+</html>
